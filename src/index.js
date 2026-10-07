@@ -1,5 +1,6 @@
 import express from "express";
 import { todoRouter } from "../routers/todo.routes.js";
+import { toggleRouter } from "../routers/toggle.routes.js";
 
 process.loadEnvFile();
 const app = express();
@@ -11,6 +12,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/todo",todoRouter)
+app.use("/todo",toggleRouter)
 
 app.use((err, req, res, next) => {
   console.log("err", err);

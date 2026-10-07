@@ -1,6 +1,6 @@
 import express from "express";
 import {getTodoAll,getTodoById,createTodo,updateTodo,deleteTodo} from "../db/todo.quary.js";
-import { searchBody, searchTitle } from "../utils/todo.search.js";
+import {searchBoth} from "../utils/todo.search.js";
 import { validationBody } from "../middleware/validationBody.js";
 import { todoSchema } from "../schema/todo.schema.js";
 import { todoUpdateSchema } from "../schema/todoupdate.js";
@@ -9,19 +9,13 @@ export const todoRouter=express.Router()
 
 todoRouter.get("/",async(req,res)=>{
     // search title , body
-    const {title , body}= req.query;
-    if(title){
-        const sTitle=await searchTitle(title);
-        return res.json({
-            data:sTitle
-        });
-    }
-    else if(body){
-        const sBody=await searchBody(body);
-        return res.json({
-            data:sBody
-        });
-    }
+    const {search}= req.query;
+   if(search){
+    const sTodo=await searchBoth(search);
+    return res.json({
+        data:sTodo
+    })
+   }
     // get All Todo
     const todo=await getTodoAll();
 
@@ -66,17 +60,12 @@ todoRouter.patch("/:id",validationBody(todoUpdateSchema.optional()),async(req,re
             message:"Todo Not Found"
         });
     }
-    // title rreturn of body exist add or not -> todos.title , body
+    // title return of body exist add or not -> todos.title , body -. ؟؟ -> operation null 
     const newTitle = title ?? todos.title;
     const newBody = body ?? todos.body;
-    // done values storge in database , العكس القيمه موجوده
-    if(todos.done === false){
-         todos.done=true;
-    }else{
-         todos.done=false;
-    }
+
     // upDate
-    const update=await updateTodo(id,newTitle,newBody,todos.done);
+    const update=await updateTodo(id,newTitle,newBody);
     // respone
     return res.status(200).json({
         message:"Todo Update successfull",
