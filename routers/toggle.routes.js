@@ -1,4 +1,4 @@
-import { getTodoById, toggleDone } from "../db/todo.quary";
+import { getTodoById, toggleDone } from "../db/todo.quary.js";
 import express from "express";
 
 export const toggleRouter=express.Router();
